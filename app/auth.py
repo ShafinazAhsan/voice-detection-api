@@ -1,16 +1,20 @@
+import os
 from fastapi import Header, HTTPException
-from typing import Optional
+from dotenv import load_dotenv
 
-API_KEY = "CHANGE_THIS_SECRET_KEY"
+load_dotenv()
 
-def verify_api_key(authorization: Optional[str] = Header(None)):
-    if authorization is None:
-        raise HTTPException(status_code=401, detail="Authorization header missing")
+API_KEY = os.getenv("API_KEY")
 
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid authorization format")
+def verify_api_key(x_api_key: str = Header(None)):
+    if not x_api_key:
+        raise HTTPException(
+            status_code=401,
+            detail="API key missing"
+        )
 
-    token = authorization.split(" ")[1]
-
-    if token != API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid API key")
+    if x_api_key != API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid API key"
+        )
