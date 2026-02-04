@@ -3,16 +3,19 @@ from typing import Optional
 
 
 class VoiceRequest(BaseModel):
-    language: str
+    language: str = Field(..., example="en")
 
-    # GUVI Endpoint Tester sends this field
-    audio_base64_format: Optional[str] = Field(
-        default=None,
-        alias="audio_base64_format"
+    # Standard API field
+    audio_base64: Optional[str] = Field(
+        None, description="Base64-encoded audio"
     )
 
-    # Direct API / evaluator support
-    audio_base64: Optional[str] = None
+    # GUVI-specific field (VERY IMPORTANT)
+    audio_base64_format: Optional[str] = Field(
+        None, description="Base64-encoded audio (GUVI tester)"
+    )
+
+    # Optional URL input
     audio_url: Optional[str] = None
 
 
