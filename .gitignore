@@ -1,4 +1,22 @@
+# Environments
 venv/
+.env
+app/.env
+
+# Python
 __pycache__/
 *.pyc
-.env
+
+# Datasets (Local/Downloaded)
+UK/
+USA/
+indic_data/
+
+# Data artifacts
+*.txt
+*.wav
+*.xlsx
+
+# IDEs
+.vscode/
+.idea/

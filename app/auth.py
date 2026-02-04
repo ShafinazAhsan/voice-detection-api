@@ -2,6 +2,7 @@ import os
 from fastapi import Header, HTTPException
 from dotenv import load_dotenv
 
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")

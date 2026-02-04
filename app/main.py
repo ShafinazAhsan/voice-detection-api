@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from dotenv import load_dotenv
+import os
 import time
 
 from app.auth import verify_api_key
@@ -7,6 +8,9 @@ from app.schemas import VoiceRequest, VoiceResponse
 from app.audio_utils import decode_base64_audio, download_audio_from_url
 from app.inference import predict_voice
 
+# Load .env from app directory if it exists, otherwise fallback to root
+env_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path=env_path)
 load_dotenv()
 
 app = FastAPI(
@@ -57,7 +61,6 @@ def detect_voice(
     return VoiceResponse(
         classification=result["classification"],
         confidence=result["confidence"],
-        language=request.language,
         explanation=result["explanation"],
         processing_time_ms=processing_time_ms
     )

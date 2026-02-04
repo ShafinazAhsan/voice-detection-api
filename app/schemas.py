@@ -24,6 +24,5 @@ class VoiceRequest(BaseModel):
 class VoiceResponse(BaseModel):
     classification: str
     confidence: float
-    language: str
     explanation: str
     processing_time_ms: int
