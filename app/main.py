@@ -1,58 +1,44 @@
 from fastapi import FastAPI, Depends, HTTPException
-from dotenv import load_dotenv
-import time
+from time import time
 
-from app.auth import verify_api_key
 from app.schemas import VoiceRequest, VoiceResponse
+from app.auth import verify_api_key
 from app.audio_utils import decode_base64_audio, download_audio_from_url
 from app.inference import predict_voice
 
-load_dotenv()
-
 app = FastAPI(
-    title="AI Voice Detection API",
-    version="1.0.0",
-    description="Detect whether a voice sample is AI-generated or human-generated"
+    title="AI Generated Voice Detection API",
+    version="1.0"
 )
 
-SUPPORTED_LANGUAGES = {"en", "ta", "hi", "ml", "te"}
 
-@app.post(
-    "/detect-voice",
-    response_model=VoiceResponse,
-    summary="Detect Voice",
-    description="Classifies an audio sample as AI-generated or human-generated"
-)
+@app.post("/detect-voice", response_model=VoiceResponse)
 def detect_voice(
     request: VoiceRequest,
-    _: None = Depends(verify_api_key)
+    _: str = Depends(verify_api_key)
 ):
-    start_time = time.time()
+    start_time = time()
 
-    # 🔹 Language validation
-    if request.language not in SUPPORTED_LANGUAGES:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported language. Supported: {sorted(SUPPORTED_LANGUAGES)}"
-        )
-
-    # 🔹 Audio input handling (Base64 OR URL)
+    # ---- AUDIO INPUT HANDLING (GUVI + Evaluators) ----
     if request.audio_base64:
         audio_bytes = decode_base64_audio(request.audio_base64)
+
+    elif request.audio_base64_format:
+        audio_bytes = decode_base64_audio(request.audio_base64_format)
 
     elif request.audio_url:
         audio_bytes = download_audio_from_url(request.audio_url)
 
     else:
         raise HTTPException(
-            status_code=400,
-            detail="Audio input missing (provide audio_base64 or audio_url)"
+            status_code=422,
+            detail="Either audio_base64 or audio_url must be provided"
         )
 
-    # 🔹 ML inference (currently mock / placeholder)
+    # ---- ML INFERENCE ----
     result = predict_voice(audio_bytes)
 
-    processing_time_ms = int((time.time() - start_time) * 1000)
+    processing_time_ms = int((time() - start_time) * 1000)
 
     return VoiceResponse(
         classification=result["classification"],

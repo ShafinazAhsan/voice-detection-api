@@ -1,24 +1,19 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
 class VoiceRequest(BaseModel):
-    audio_base64: Optional[str] = Field(
-        None, description="Base64-encoded MP3 audio"
-    )
-    audio_url: Optional[str] = Field(
-        None, description="Public URL to MP3 audio file"
-    )
-    language: str = Field(..., example="en")
-    message: Optional[str] = Field(
-        None, description="Optional test description"
+    language: str
+
+    # GUVI Endpoint Tester sends this field
+    audio_base64_format: Optional[str] = Field(
+        default=None,
+        alias="audio_base64_format"
     )
 
-    @model_validator(mode="after")
-    def validate_audio_input(self):
-        if not self.audio_base64 and not self.audio_url:
-            raise ValueError("Either audio_base64 or audio_url must be provided")
-        return self
+    # Direct API / evaluator support
+    audio_base64: Optional[str] = None
+    audio_url: Optional[str] = None
 
 
 class VoiceResponse(BaseModel):
