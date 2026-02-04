@@ -3,22 +3,15 @@ from typing import Optional
 
 
 class VoiceDetectRequest(BaseModel):
-    language: str
+    language: str = Field(..., example="en")
 
-    # GUVI sends this
-    audio_base64_format: Optional[str] = Field(
-        default=None,
-        description="Base64 encoded audio (GUVI field)"
-    )
-
-    # Evaluator / standard API sends this
-    audio_base64: Optional[str] = Field(
-        default=None,
-        description="Base64 encoded audio"
-    )
-
+    # Standard API inputs
+    audio_base64: Optional[str] = None
     audio_url: Optional[str] = None
-    audio_format: Optional[str] = "mp3"
+
+    # GUVI-specific fields
+    audio_format: Optional[str] = None
+    audio_base64_format: Optional[str] = None
 
 
 class VoiceDetectResponse(BaseModel):
