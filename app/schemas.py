@@ -1,20 +1,9 @@
-from pydantic import BaseModel, Field
+# app/schemas.py
+from pydantic import BaseModel
 from typing import Optional
 
-class VoiceDetectRequest(BaseModel):
-    language: str = Field(..., example="en")
 
-    # GUVI sends this
-    audio_base64_format: Optional[str] = None
-
-    # Standard API users may send this
-    audio_base64: Optional[str] = None
-
-    # Optional URL support
-    audio_url: Optional[str] = None
-
-
-class VoiceDetectResponse(BaseModel):
+class DetectVoiceResponse(BaseModel):
     classification: str
     confidence: float
     language: str
