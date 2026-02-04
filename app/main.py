@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Header, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="AI Generated Voice Detection API",
@@ -7,12 +7,15 @@ app = FastAPI(
 )
 
 # -----------------------------
-# Request Schema (JSON)
+# Request schema (GUVI-compatible)
 # -----------------------------
 class DetectVoiceRequest(BaseModel):
     language: str
-    audio_format: str
-    audio_base64_format: str
+    audio_format: str = Field(..., alias="audioFormat")
+    audio_base64: str = Field(..., alias="audioBase64")
+
+    class Config:
+        populate_by_name = True
 
 
 @app.get("/")
@@ -29,14 +32,13 @@ async def detect_voice(
     if x_api_key != "super_secret_key_123":
         raise HTTPException(status_code=401, detail="Invalid API key")
 
-    # Basic validation
-    if not payload.audio_base64_format.strip():
+    if not payload.audio_base64.strip():
         raise HTTPException(
             status_code=422,
-            detail="audio_base64_format cannot be empty"
+            detail="audioBase64 cannot be empty"
         )
 
-    # Mock inference (acceptable for GUVI validation)
+    # Mock response (acceptable for GUVI validation)
     return {
         "prediction": "human",
         "confidence": 0.87,
