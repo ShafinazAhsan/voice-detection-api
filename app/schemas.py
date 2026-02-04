@@ -2,24 +2,26 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-class VoiceRequest(BaseModel):
-    language: str = Field(..., example="en")
+class VoiceDetectRequest(BaseModel):
+    language: str
 
-    # Standard API field
-    audio_base64: Optional[str] = Field(
-        None, description="Base64-encoded audio"
-    )
-
-    # GUVI-specific field (VERY IMPORTANT)
+    # GUVI sends this
     audio_base64_format: Optional[str] = Field(
-        None, description="Base64-encoded audio (GUVI tester)"
+        default=None,
+        description="Base64 encoded audio (GUVI field)"
     )
 
-    # Optional URL input
+    # Evaluator / standard API sends this
+    audio_base64: Optional[str] = Field(
+        default=None,
+        description="Base64 encoded audio"
+    )
+
     audio_url: Optional[str] = None
+    audio_format: Optional[str] = "mp3"
 
 
-class VoiceResponse(BaseModel):
+class VoiceDetectResponse(BaseModel):
     classification: str
     confidence: float
     language: str
