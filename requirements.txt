@@ -1,11 +1,9 @@
 # ---- Core API ----
-fastapi==0.115.0
-uvicorn==0.32.0
-starlette==0.41.0
-pydantic==2.9.0
-python-dotenv==1.0.1
-python-multipart==0.0.12
-anyio==4.6.0
+fastapi
+uvicorn
+python-dotenv
+python-multipart
+anyio
 
 # ---- Audio Processing ----
 numpy==1.26.4
@@ -22,5 +20,5 @@ scikit-learn==1.5.2
 joblib==1.4.2
 
 # ---- Utilities ----
-tqdm==4.66.5
-typing_extensions==4.12.2
+tqdm
+typing_extensions
