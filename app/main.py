@@ -41,7 +41,7 @@ def health():
 )
 async def detect_voice(
     payload: DetectVoiceRequest,
-    x_api_key: str = Header(..., alias="X-API-KEY")
+    x_api_key: str = Header(..., alias="x-api-key")
 ):
     start_time = time.time()
 

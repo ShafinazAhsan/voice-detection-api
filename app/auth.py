@@ -19,3 +19,4 @@ def verify_api_key(x_api_key: str = Header(None)):
             status_code=401,
             detail="Invalid API key"
         )
+    return True
