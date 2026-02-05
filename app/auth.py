@@ -2,31 +2,48 @@ import os
 from fastapi import HTTPException
 from dotenv import load_dotenv
 
-# Load variables from environment
-load_dotenv()
+# We only load .env if we are not in a production environment like Railway
+# (Railway provides these directly in the environment)
+if not os.getenv("RAILWAY_ENVIRONMENT"):
+    load_dotenv()
 
 def verify_api_key(provided_key: str):
-    # Get the key from the server's environment variables
-    # This is what you set in the Railway 'Variables' tab
+    """
+    Robust API Key validation that handles Railway environment variables
+    and potential whitespace issues.
+    """
+    # 1. Fetch from environment (this is what Railway uses)
     expected_key = os.getenv("API_KEY")
 
+    # 2. Safety check: If not found, try reloading env (fallback)
+    if not expected_key:
+        load_dotenv()
+        expected_key = os.getenv("API_KEY")
+
+    # 3. Handle missing configuration on server
+    if not expected_key:
+        print("CRITICAL: API_KEY environment variable is not set!")
+        raise HTTPException(
+            status_code=500,
+            detail="Server configuration error: API_KEY not found."
+        )
+
+    # 4. Handle missing header in request
     if not provided_key:
         raise HTTPException(
             status_code=401,
-            detail="API key missing"
+            detail="API key header (X-API-KEY) is missing."
         )
 
-    if provided_key != expected_key:
-        # Debugging aid: In production, you might not want to show what the expected key is
-        # but while we fix this, let's make sure it's not simply empty
-        if not expected_key:
-            raise HTTPException(
-                status_code=500,
-                detail="Server configuration error: API_KEY not set on server"
-            )
-            
+    # 5. Clean and compare (strip whitespace to prevent paste errors)
+    provided_clean = provided_key.strip()
+    expected_clean = expected_key.strip()
+
+    if provided_clean != expected_clean:
+        print(f"AUTH FAILED: Provided key dose not match expected key.")
         raise HTTPException(
             status_code=401,
-            detail="Invalid API key"
+            detail="Invalid API key."
         )
+    
     return True
