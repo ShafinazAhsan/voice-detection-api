@@ -4,9 +4,14 @@
     {
       "src": "app/main.py",
       "use": "@vercel/python",
-      "config": { "maxDuration": 60 }
+      "config": {
+        "maxDuration": 60
+      }
     }
   ],
+  "env": {
+    "NUMBA_CACHE_DIR": "/tmp"
+  },
   "routes": [
     {
       "src": "/(.*)",
