@@ -41,13 +41,12 @@ def health():
 )
 async def detect_voice(
     payload: DetectVoiceRequest,
-    x_api_key: str = Header(..., alias="x-api-key")
+    x_api_key: str = Header(..., alias="X-API-KEY")
 ):
     start_time = time.time()
 
-    # 🔹 API Key Validation (uses the env-based key we set up)
-    if not verify_api_key(x_api_key):
-        raise HTTPException(status_code=401, detail="Invalid API key")
+    # 🔹 API Key Validation
+    verify_api_key(x_api_key)
 
     if not payload.audio_base64.strip():
         raise HTTPException(

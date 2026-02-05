@@ -1,20 +1,30 @@
 import os
-from fastapi import Header, HTTPException
+from fastapi import HTTPException
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+# Load variables from environment
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
+def verify_api_key(provided_key: str):
+    # Get the key from the server's environment variables
+    # This is what you set in the Railway 'Variables' tab
+    expected_key = os.getenv("API_KEY")
 
-def verify_api_key(x_api_key: str = Header(None)):
-    if not x_api_key:
+    if not provided_key:
         raise HTTPException(
             status_code=401,
             detail="API key missing"
         )
 
-    if x_api_key != API_KEY:
+    if provided_key != expected_key:
+        # Debugging aid: In production, you might not want to show what the expected key is
+        # but while we fix this, let's make sure it's not simply empty
+        if not expected_key:
+            raise HTTPException(
+                status_code=500,
+                detail="Server configuration error: API_KEY not set on server"
+            )
+            
         raise HTTPException(
             status_code=401,
             detail="Invalid API key"
