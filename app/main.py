@@ -30,8 +30,13 @@ class DetectVoiceRequest(BaseModel):
         populate_by_name = True
 
 @app.get("/")
-def health():
-    return {"status": "ok"}
+def home():
+    return {
+        "message": "Welcome to the AI Voice Detection API",
+        "documentation": "/docs",
+        "status": "operational",
+        "version": "1.0.0"
+    }
 
 @app.post(
     "/detect-voice",
