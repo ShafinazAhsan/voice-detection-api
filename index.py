@@ -1,10 +1,19 @@
 import sys
 import os
 
-# Ensure the 'app' directory is in the python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
+# Add current directory and 'app' directory to sys.path
+BASE_DIR = os.path.dirname(__file__)
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, 'app'))
 
-from app.main import app
-
-# This shim allows Vercel to see the requirements.txt in the root
-# while keeping your logic inside the /app directory.
+try:
+    from app.main import app
+    print("Successfully imported FastAPI app from app.main")
+except ImportError as e:
+    print(f"Failed to import app: {e}")
+    # Fallback if Vercel restructure movements occur
+    try:
+        from main import app
+        print("Successfully imported FastAPI app from root main")
+    except ImportError:
+        raise e
